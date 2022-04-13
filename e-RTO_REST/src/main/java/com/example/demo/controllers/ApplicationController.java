@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,14 +45,9 @@ public class ApplicationController
 		System.out.print(a);
 		Citizen c = cservice.getCitizen(a.getCitizen_id());
 		
-		Application app = new Application(a.getAadhar(),a.getDOB(),a.getBlood_group(),a.getGender(),a.getIdentification_mark(),a.getPresent_address(), a.getPermanent_address(), "learning", c , null);
+		Application app = new Application(a.getAadhar(),a.getDOB(),a.getBlood_group(),a.getGender(),a.getIdentification_mark(),a.getPresent_address(), a.getPermanent_address(), a.getApplication_type(), c , null);
 		return appservice.addApplication(app);
 		
-
-		
-		
-		//(String aadhar, Date dOB, String blood_group, String gender, String identification_mark,
-				//String present_address, String permanent_address, String application_type, Citizen citizen, Document doc
 	}
 	
 	@PostMapping("/addapplicationdocs/{aid}")
@@ -73,13 +69,9 @@ public class ApplicationController
 		}
 		
 		return new Application();
-		
-		
 
 	}
-	
-	
-	
+
 	@GetMapping("/getallapp")
 	public List<Application> getAllApp()
 	{
@@ -90,5 +82,29 @@ public class ApplicationController
 	public Application getAppById(@PathVariable int application_id)
 	{
 		return appservice.getAppById(application_id);
+	}
+	
+	@GetMapping("/checklearningcompleted")
+	public boolean checkLearningCompleted(@RequestParam int citizen_id)
+	{
+		return appservice.checkLearningCompleted(citizen_id);		
+	}
+	
+	@GetMapping("/updatestatus")
+	public boolean updateStatus(@RequestParam int appId, @RequestParam String status)
+	{
+		return appservice.updateStatus(appId, status);
+	}
+	
+	@GetMapping("/getverifieddoc")
+	public Application getVerifiedDoc(@RequestParam int cid)
+	{
+		return appservice.getDocVerifiedApp(cid);
+	}
+	
+	@GetMapping("/checkstatus/{cid}")
+	public Application checkStatus(@PathVariable int cid)
+	{
+		return appservice.checkStatus(cid);
 	}
 }

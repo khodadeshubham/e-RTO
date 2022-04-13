@@ -17,4 +17,17 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
 	@Modifying
 	@Query("update Application set doc = :doc_id where application_id= :app_id")
 	public int updateDoc(int app_id, Document doc_id);
+	
+	@Query("select a from Application a where citizen_id= :cid and application_status='completed' and application_type='learning'")
+	public Application checkLearningCompleted(int cid);
+	
+	@Query("select a from Application a where citizen_id= :cid and application_status='verified' and application_type='learning'")
+	public Application getDocVerifiedApp(int cid);
+	
+	@Modifying
+	@Query("update Application set application_status= :status where application_id= :app_id")
+	public int updateStatus(int app_id, String status);
+	
+	@Query("select a from Application a where citizen_id= :cid")
+	public Application checkStatus(int cid);
 }

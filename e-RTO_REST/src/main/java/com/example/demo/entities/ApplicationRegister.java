@@ -10,13 +10,15 @@ public class ApplicationRegister {
     String identification_mark;
     String present_address;
     String permanent_address;
+    String application_type;
     int citizen_id;
+    
 	public ApplicationRegister() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public ApplicationRegister(String aadhar, Date dOB, String blood_group, String gender, String identification_mark,
-			String present_address, String permanent_address, int citizen_id) {
+			String present_address, String permanent_address,String application_type, int citizen_id) {
 		super();
 		this.aadhar = aadhar;
 		this.dob = dOB;
@@ -25,6 +27,7 @@ public class ApplicationRegister {
 		this.identification_mark = identification_mark;
 		this.present_address = present_address;
 		this.permanent_address = permanent_address;
+		this.application_type= application_type;
 		this.citizen_id = citizen_id;
 	}
 	public String getAadhar() {
@@ -68,6 +71,13 @@ public class ApplicationRegister {
 	}
 	public void setPermanent_address(String permanent_address) {
 		this.permanent_address = permanent_address;
+	}
+
+	public String getApplication_type() {
+		return application_type;
+	}
+	public void setApplication_type(String application_type) {
+		this.application_type = application_type;
 	}
 	public int getCitizen_id() {
 		return citizen_id;

@@ -64,4 +64,40 @@ public class ApplicationService
 		else
 			return null;
 	}
+	
+	public boolean checkLearningCompleted(int cid)
+	{
+		Application a= apprepo.checkLearningCompleted(cid);
+		if(a != null)
+		{
+			return true;
+		}
+		else
+			return false;
+	}
+	
+	public Application getDocVerifiedApp(int cid)
+	{
+		Application a= apprepo.getDocVerifiedApp(cid);
+		if(a != null)
+		{
+			return a;
+		}
+		return null;
+	}
+	
+	public boolean updateStatus(int app_id, String status)
+	{
+		int i = apprepo.updateStatus(app_id, status);
+		if(i==1)
+			return true;
+		else
+			return false;
+	}
+	
+	public Application checkStatus(int cid)
+	{
+		return apprepo.checkStatus(cid);
+	}
+
 }
