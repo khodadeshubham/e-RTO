@@ -3,6 +3,7 @@ package com.example.demo.services;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,12 +14,16 @@ import com.example.demo.entities.Citizen;
 import com.example.demo.entities.Document;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.ApplicationRepository;
+import com.example.demo.repositories.CitizenRepository;
 
 @Service
 public class ApplicationService
 {
 	@Autowired
 	ApplicationRepository apprepo;
+	
+	@Autowired
+	CitizenRepository crepo;
 	
 	public Application addApplication(Application a)
 	{
@@ -78,7 +83,9 @@ public class ApplicationService
 	
 	public Application getDocVerifiedApp(int cid)
 	{
-		Application a= apprepo.getDocVerifiedApp(cid);
+		Optional<Citizen> cop= crepo.findById(cid);
+		Citizen c= cop.get();
+		Application a= apprepo.getDocVerifiedApp(c);
 		if(a != null)
 		{
 			return a;
@@ -98,6 +105,11 @@ public class ApplicationService
 	public Application checkStatus(int cid)
 	{
 		return apprepo.checkStatus(cid);
+	}
+	
+	public Application getAppByAppId(int appId)
+	{
+		return apprepo.getAppByAppId(appId);
 	}
 
 }

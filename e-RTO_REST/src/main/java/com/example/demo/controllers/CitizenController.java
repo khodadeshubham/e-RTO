@@ -1,6 +1,8 @@
 package com.example.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,12 +28,25 @@ public class CitizenController
 	@Autowired
 	StaffService sservice;
 	
+	@Autowired
+	JavaMailSender sender;
+	
 	@PostMapping("/citizenreg")
 	public Citizen regCitizen(@RequestBody CitizenRegister nc)
 	{
 		User u= new User(nc.getEmail(), nc.getPassword(), "citizen");
 		Citizen c= new Citizen(nc.getFname(), nc.getLname(), nc.getContact_no(), u);
-		return cservice.regCitizen(c);
+		Citizen newCitizen= cservice.regCitizen(c);
+		if(newCitizen != null)
+		{
+			SimpleMailMessage mail= new SimpleMailMessage();
+			mail.setFrom("ertosystem4@gmail.com");
+			mail.setTo(newCitizen.getUser().getEmail());
+			mail.setSubject("e-RTO Registration");
+			mail.setText("Your have successfully registered on e-RTO.");
+			sender.send(mail);
+		}
+		return newCitizen;
 	}
 	
 

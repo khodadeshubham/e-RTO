@@ -51,14 +51,20 @@ public class TestSlotService
 		return slots;
 	}
 	
-	public TestSlot bookSlot(int cid, int slot_id, Date date)
+	public TestSlot bookSlot(Application a, int slot_id, Date date)
 	{
-		Application a= apprepo.getDocVerifiedApp(cid);
-		System.out.println(a);
+		//Application a= apprepo.getDocVerifiedApp(cid);
+		//System.out.println(a);
 		Slot s= slotrepo.getById(slot_id);
 		System.out.println(s);
 		TestSlot ts= new TestSlot(date, s, a);
-		System.out.println(ts);
-		return tsrepo.save(ts);
+		
+		TestSlot newts= tsrepo.save(ts);
+		return newts;
 	}
+	
+	/*public int slotbook(Date d, int slot_id, int appid)
+	{
+		return tsrepo.addTestSlot(d, slot_id, appid);
+	}*/
 }

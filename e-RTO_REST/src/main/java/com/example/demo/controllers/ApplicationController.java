@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +41,9 @@ public class ApplicationController
 	@Autowired
 	DocumentService dservice;
 	
+	@Autowired
+	JavaMailSender sender;
+	
 	@PostMapping("/addapplication")
 	public Application addApplication(@RequestBody ApplicationRegister a)
 	{
@@ -60,10 +65,21 @@ public class ApplicationController
 			Document d = new Document(file1.getBytes() ,file2.getBytes()  , file3.getBytes() );
 			Document inserted =dservice.save(d);
 			Application a= appservice.updateDoc(aid , inserted);
-			System.out.print(a);
+			//System.out.print(a);
+			if(a.getApplication_id() != 0)
+			{
+				String licenceType= a.getApplication_type();
+				SimpleMailMessage mail= new SimpleMailMessage();
+				mail.setFrom("ertosystem4@gmail.com");
+				mail.setTo(a.getCitizen().getUser().getEmail());
+				mail.setSubject("e-RTO "+licenceType+" licence Application");
+				mail.setText("Your "+licenceType+" licence Application submitted successfully."+"Your application Id is "+ a.getApplication_id());
+				mail.setText("Your application Id is "+ a.getApplication_id());
+				sender.send(mail);
+			}
 			return a;
 		}
-		catch(Exception e)
+		catch(Exception e) 
 		{
 			e.printStackTrace();
 		}
@@ -93,7 +109,18 @@ public class ApplicationController
 	@GetMapping("/updatestatus")
 	public boolean updateStatus(@RequestParam int appId, @RequestParam String status)
 	{
-		return appservice.updateStatus(appId, status);
+		boolean flag=  appservice.updateStatus(appId, status);
+		if(flag)
+		{
+			Application a= appservice.getAppByAppId(appId);
+			SimpleMailMessage mail= new SimpleMailMessage();
+			mail.setFrom("ertosystem4@gmail.com");
+			mail.setTo(a.getCitizen().getUser().getEmail());
+			mail.setSubject("e-RTO appliaction");
+			mail.setText("Your application "+ a.getApplication_id()+ " is "+ a.getApplication_status()+" Please book test slot http://localhost:3000");
+			sender.send(mail);
+		}
+		return flag;
 	}
 	
 	@GetMapping("/getverifieddoc")

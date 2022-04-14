@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.entities.Application;
+import com.example.demo.entities.Citizen;
 import com.example.demo.entities.Document;
 
 @Repository
@@ -22,7 +23,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
 	public Application checkLearningCompleted(int cid);
 	
 	@Query("select a from Application a where citizen_id= :cid and application_status='verified' and application_type='learning'")
-	public Application getDocVerifiedApp(int cid);
+	public Application getDocVerifiedApp(Citizen cid);
 	
 	@Modifying
 	@Query("update Application set application_status= :status where application_id= :app_id")
@@ -30,4 +31,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
 	
 	@Query("select a from Application a where citizen_id= :cid")
 	public Application checkStatus(int cid);
+	
+	@Query("select a from Application a where application_Id= :appId")
+	public Application getAppByAppId(int appId);
 }

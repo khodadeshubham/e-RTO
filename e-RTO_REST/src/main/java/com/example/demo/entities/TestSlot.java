@@ -24,10 +24,10 @@ public class TestSlot
 	@JsonFormat( pattern = "yyyy-mm-dd")
 	@Column
 	private Date test_date;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "slot_id")
 	private Slot slot;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "application_id")
 	private Application app;
 	
@@ -43,13 +43,9 @@ public class TestSlot
 		this.app = app;
 	}
 
-	public TestSlot(int test_slot_id, Date test_date, Slot slot, Application app) {
-		super();
-		this.test_slot_id = test_slot_id;
-		this.test_date = test_date;
-		this.slot = slot;
-		this.app = app;
-	}
+	
+	
+	
 
 	public int getTest_slot_id() {
 		return test_slot_id;
