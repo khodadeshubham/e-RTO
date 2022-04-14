@@ -6,10 +6,16 @@ import CitizenNavBar from "./CitizenNavBar";
 export default function CitizenRegister()
 {
     const [msg,setMsg] = useState("");
+    const[conMsg, setConMsg]= useState("");
+    const[emailMsg,setEmailMsg]= useState("");
 
-    const [errorMessage, setErrorMessage] = useState("")
+    const [PassErrorMessage, setPassErrorMessage] = useState("")
 
     const [emailFlag,setEmailFlag] = useState("false");
+    const [passFlag,setPassFlag] = useState("false");
+    const [contactFlag,setContactFlag] = useState("false");
+
+    const [passColor,setPassColor] = useState("white");
 
     const[state, setState]= useState(
         {
@@ -30,24 +36,48 @@ export default function CitizenRegister()
         ));
     }
 
+    const contactValidate=(ev)=>{
+        ev.preventDefault();
+        var phoneno = /^\d{10}$/;
+        if (state.contact_no.match(phoneno) ) 
+        {
+            setConMsg("")
+            setContactFlag("true");
+          } else {
+            setConMsg("Please enter valid Contact Number")
+            setContactFlag("false");
+          }
+    } 
+
+
     const emailExist=(ev)=>{
         //alert("hi");
         ev.preventDefault();
-        fetch("http://localhost:8080/emailexist?email="+state.email)
+        var pattern= /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.com$/;
+        if(state.email.match(pattern))
+        {
+            fetch("http://localhost:8080/emailexist?email="+state.email)
             .then(resp => resp.text())
             .then(data => {
                 console.log(data);
                 if(data === "true")
                 {
-                    setMsg("Email already Used. Please Choose defferent Email ID") ;
+                    setEmailMsg("Email already Used. Please Choose defferent Email ID") ;
                     setEmailFlag("false");
                 }
                 else
                 {
-                    setMsg("");
+                    setEmailMsg("");
                     setEmailFlag("true");
                 }
             }) 
+        }
+        else
+        {
+            setEmailMsg("Enter Valid email-ID") ;
+            setEmailFlag("false");
+        }
+        
     }
 
     const passValidation=(ev)=>{
@@ -57,23 +87,20 @@ export default function CitizenRegister()
             minLength: 8, minLowercase: 1,
             minUppercase: 1, minNumbers: 1, minSymbols: 1
           })) {
-            setErrorMessage('Is Strong Password')
+            setPassErrorMessage('Strong Password')
+            setPassColor("white");
+            setPassFlag("true");
           } else {
-            setErrorMessage('Is Not Strong Password')
+            setPassErrorMessage('Strong Password is Not Strong')
+            setPassColor("red");
+            setPassFlag("false");
           }
-        /*var pass = state.pwd;
-        var reg = '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,32}$/';
-        var test = reg.test(pass);
-        if (test) {
-            alert('pass');
-        } else{
-            alert('fail');
-        }*/
+       
     }
 
     const citizenreg=(ev)=>{
         ev.preventDefault();
-        if(emailFlag === "true")
+        if(emailFlag === "true" && passFlag==="true"  && contactFlag==="true")
         {
             const req= {
                 method: 'POST',
@@ -96,13 +123,16 @@ export default function CitizenRegister()
                     if(data.length != 0)
                     {
                         setMsg("Registration Successfull...") ;
+
                     }
                     else
                     {
                         setMsg("Registration Failed...") ;
                     }
-                })
-    
+                })    
+        }
+        else{
+            setMsg("Please fill valid Data")
         }
         
     }
@@ -110,40 +140,45 @@ export default function CitizenRegister()
 
 
     return(
-        <div className="bg-secondary text-white" style={{height:"500px"}}>   
+        <div className="bg-secondary text-white" style={{height:"600px"}}>   
         <div className="container">
-            <form>
+            <form onSubmit={citizenreg}>
                 <div className="form-row col-md-12">
                      <div className="form-group col-md-6">
                         <h6 className="display-6">New User Registration</h6>
                         <label htmlFor="fname">First Name</label>
                         <input type="text" className="form-control" name= "fname" id="fname" placeholder="First Name" onChange={handleInput}  required/>
+                        
                     </div>
 
                     <div className="form-group col-md-6">
                         <label htmlFor="lname">Last Name</label>
                         <input type="text" className="form-control" name= "lname" id="lname" placeholder="Last Name" onChange={handleInput}  required/>
+                        
                     </div>
 
                     <div className="form-group col-md-6">
                         <label htmlFor="contact_no">Contact Number</label>
-                        <input type="text" className="form-control" name= "contact_no" id="contact_no" placeholder="Contact Number" onChange={handleInput}  required/>
+                        <input type="text" className="form-control"  name= "contact_no" id="contact_no" placeholder="Contact Number" onChange={handleInput} onChange={handleInput} onBlur={contactValidate} required/>
+                        <p style={{color:"red"}}>{conMsg}</p>
                     </div>
 
                     <div className="form-group col-md-6">
                         <label htmlFor="email">Email</label>
                         <input type="email" className="form-control" name="email" id="email" placeholder="Email" onChange={handleInput} onBlur={emailExist}  required/>
+                        <p style={{color:"red"}}>{emailMsg}</p>
                     </div>
                     <div className="form-group col-md-6">
                         <label htmlFor="pwd">Password</label>
                         <input type="password" className="form-control" name="pwd" id="pwd" placeholder="Password" onChange={handleInput} onBlur={passValidation}  required/>
-                        <button type="submit" className="btn btn-primary" onClick={citizenreg}>Sign Up</button>
+                        <p style={{color:passColor}}>{PassErrorMessage}</p>
+                        <button type="submit" className="btn btn-primary" >Sign Up</button>
+                        <p >{msg}</p>                        
                     </div>
                 </div>
                 
          </form>
-         <p >{msg}</p>
-         <p style={{color:"Red"}}>{errorMessage}</p>
+         
         </div>
         </div>
     )
